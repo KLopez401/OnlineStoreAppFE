@@ -1,0 +1,117 @@
+<p-table
+  #dt
+  currentPageReportTemplate="Showing {first} to {last} of {{ totalCount() }} entries"
+  [columns]="columns()"
+  [loading]="store.isCustomerListLoading()"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 20, 50]"
+  [showCurrentPageReport]="true"
+  [totalRecords]="totalCount()"
+  [value]="rowData()"
+>
+  <ng-template pTemplate="caption">
+    <div class="w-full flex justify-between items-center">
+      <h1>Customer Table</h1>
+      <div class="flex gap-4">
+        <p-iconfield class="ml-auto" iconPosition="left">
+          <p-inputicon>
+            <i class="pi pi-search"></i>
+          </p-inputicon>
+          <input
+            pInputText
+            placeholder="Search keyword"
+            type="text"
+            (input)="dt.filterGlobal($any($event.target).value, 'contains')"
+          />
+        </p-iconfield>
+        <p-button
+          icon="pi pi-plus"
+          label="Add Customer"
+          [relativeTo]="activatedRoute"
+          [routerLink]="['add']"
+        />
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template #header let-columns()>
+    <tr>
+      @for (column of columns(); track column.id) {
+        <th [pSortableColumn]="column.sortable ? column.field : ''">
+          {{ column.displayName }}
+          @if (column.sortable) {
+            <p-sortIcon [field]="column.field" />
+          }
+          <!-- @if (column.filter) {
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              [field]="column.field"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+              [showOperator]="false"
+            >
+              <ng-template #filter let-filter="filterCallback" let-value>
+                <p-multiSelect
+                  optionLabel="value"
+                  placeholder="Any"
+                  [ngModel]="value"
+                  [options]="getFilterOptions(column.field)"
+                  (ngModelChange)="filter($event)"
+                  (onChange)="filter($event.value)"
+                >
+                  <ng-template #item let-option>
+                    <span class="ml-1 mt-1">{{ option[column.field] }}</span>
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          } -->
+        </th>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template #body let-columns()="columns" let-rowData>
+    <tr>
+      @for (column of columns(); track column.id) {
+        @if (column.field === 'action') {
+          <td class="flex gap-3">
+            <p-button
+              icon="pi pi-eye"
+              pTooltip="View"
+              tooltipPosition="top"
+              [queryParams]="{ mode: 'view' }"
+              [routerLink]="[rowData.id]"
+              [text]="true"
+            />
+            <p-button
+              icon="pi pi-pen-to-square"
+              pTooltip="Edit"
+              tooltipPosition="top"
+              [queryParams]="{ mode: 'edit' }"
+              [routerLink]="[rowData.id]"
+              [text]="true"
+            />
+            <p-button
+              icon="pi pi-trash"
+              pTooltip="Delete"
+              tooltipPosition="top"
+              [severity]="'danger'"
+              [text]="true"
+              (onClick)="onDelete(rowData)"
+            />
+          </td>
+        } @else {
+          <td>
+            {{ rowData[column.field] }}
+          </td>
+        }
+      }
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-toast />
+<p-confirmdialog />

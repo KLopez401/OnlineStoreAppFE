@@ -1,0 +1,99 @@
+<div class="flex flex-col gap-4">
+  <app-back-page-button [disabled]="purchasesStore.isPurchaseAdding()" [route]="'/purchases'" />
+  <div class="flex flex-col gap-3">
+    <h1>{{ headerLabel() }}</h1>
+    <p-card>
+      <div class="flex flex-col gap-3">
+        @if (mode() === modes().VIEW) {
+          <div class="flex gap-3">
+            <h1>Receipt Reference:</h1>
+            <h1>{{ purchasesStore.purchaseDetail()?.receiptReference }}</h1>
+          </div>
+        }
+        <div class="flex flex-col gap-3">
+          @if (mode() !== modes().VIEW) {
+            <p-select
+              class="w-full md:w-80"
+              optionLabel="fullName"
+              placeholder="Select customer"
+              [disabled]="mode() === modes().VIEW"
+              [options]="customerOptions()"
+              [(ngModel)]="selectedCustomer"
+            />
+          }
+          <h2>Customer</h2>
+          <div class="flex gap-3">
+            <span>Full Name:</span>
+            <span>{{ selectedCustomer?.firstName }} {{ selectedCustomer?.lastName }}</span>
+          </div>
+          <div class="flex gap-3">
+            <span>Email:</span>
+            <span>{{ selectedCustomer?.email }}</span>
+          </div>
+          <div class="flex gap-3">
+            <span>Phone:</span>
+            <span>{{ selectedCustomer?.phone }}</span>
+          </div>
+        </div>
+        <br />
+        <div class="flex flex-col gap-3">
+          <h2>Products</h2>
+          @if (mode() !== modes().VIEW) {
+            <p-multiselect
+              optionLabel="name"
+              placeholder="Select products"
+              styleClass="w-full md:w-80"
+              [disabled]="mode() === modes().VIEW"
+              [maxSelectedLabels]="3"
+              [options]="productsStore.productList()"
+              (onChange)="test()"
+              [(ngModel)]="selectedProducts"
+            />
+          }
+
+          @if (selectedProducts.length) {
+            <p-table [value]="selectedProducts">
+              <ng-template #header>
+                <tr>
+                  @for (column of productColumns(); track $index) {
+                    <th>{{ column.displayName }}</th>
+                  }
+                </tr>
+              </ng-template>
+              <ng-template #body let-columns()="columns" let-product>
+                <tr>
+                  @for (column of productColumns(); track $index) {
+                    <td>{{ product[column.field] }}</td>
+                  }
+                </tr>
+              </ng-template>
+            </p-table>
+          }
+        </div>
+        
+          <div class="flex gap-3">
+            <h1>Total:</h1>
+            @if (mode() === modes().VIEW) {
+            <h1>{{ purchasesStore.purchaseDetail()?.total }}</h1>
+            }
+            @else {
+              <h1>{{ totalPrice() }}</h1>
+            }
+          </div>
+
+      </div>
+    </p-card>
+  </div>
+  @if (mode() !== modes().VIEW) {
+    <div class="w-full flex justify-end items-center gap-3">
+      <p-button
+        [disabled]="isActionDisabled()"
+        [label]="actionLabel()"
+        (onClick)="onActionClicked()"
+      ></p-button>
+      @if (purchasesStore.isPurchaseAdding()) {
+        <app-spinner />
+      }
+    </div>
+  }
+</div>

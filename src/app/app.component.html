@@ -1,0 +1,12 @@
+<p-toolbar>
+  <ng-template #start>
+    <div class="flex items-center gap-2">
+      <p-button label="Customers" plain text [routerLink]="['/customers']" />
+      <p-button label="Products" plain text [routerLink]="['/products']" />
+      <p-button label="Customer Purchases" plain text [routerLink]="['/purchases']" />
+    </div>
+  </ng-template>
+</p-toolbar>
+<div class="p-5">
+  <router-outlet />
+</div>

@@ -1,0 +1,20 @@
+<div class="flex flex-col gap-3">
+  <span>Are you sure you want to proceed?</span>
+  <div class="flex gap-3 justify-end items-center">
+    <p-button
+      label="Cancel"
+      severity="secondary"
+      [disabled]="isDisabled()"
+      (onClick)="dialogRef.close()"
+    ></p-button>
+    <p-button
+      label="Confirm"
+      severity="danger"
+      [disabled]="isDisabled()"
+      (onClick)="onConfirm()"
+    ></p-button>
+    @if (isDisabled()) {
+      <app-spinner />
+    }
+  </div>
+</div>
